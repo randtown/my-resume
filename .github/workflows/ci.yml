@@ -31,8 +31,7 @@ jobs:
     steps:
     - name: SSH to Server
       uses: appleboy/ssh-action@v1.0.3 
-        
-    with:
+      with:
       host: 13.219.255.160  
       username: ec2-user
       key: ${{ secrets.KEY }}

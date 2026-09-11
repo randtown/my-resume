@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest # github runner
     steps: # Are for the build 
       - name: clone repo
-        uses: action/checkout@v4
+        uses: actions/checkout@v4
       - name: AWS creds config #   need aws creds to login
         uses: aws-actions/configure-aws-credentials@v4
         with: # input for action

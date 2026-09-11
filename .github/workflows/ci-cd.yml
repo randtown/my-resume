@@ -4,10 +4,14 @@ on:
   push: 
      branches: [main]
   pull_request:
-     branches: [main]
+     branches: [main] 
+
+permissions:
+  id-token: write
+  contents: read
 
 env:
-   AWS_REGION: us-east-
+   AWS_REGION: us-east-1
    AWS_ROLE: ${{ secrets.AWS_ACTION_ROLE }} # to pull role-to-assume for github action 
 
 
@@ -16,12 +20,12 @@ jobs:
     runs-on: ubuntu-latest # github runner
     steps: # Are for the build 
       - name: clone repo
-        uses: action/checkout@v3
+        uses: action/checkout@v4
       - name: AWS creds config #   need aws creds to login
         uses: aws-actions/configure-aws-credentials@v4
         with: # input for action
           role-to-assume: ${{ env.AWS_ROLE }}   #Open ID Connect OIDC: some of our pipline have access key and secret key from AWS, and right now I am refactioring those pipeline to us OIDC in state.  So we are useing a role in AWS instead of generating a key that we are plucking from GitHub action.
           aws-region: ${{ env.AWS_REGION }}
       - name: loging to ecr
-        uses: aws-actions/amazon-ecr-login@v1
+        uses: aws-actions/amazon-ecr-login@v2
       

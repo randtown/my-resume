@@ -30,6 +30,20 @@ jobs:
       - name: loging to ecr
         uses: aws-actions/amazon-ecr-login@v2
         id: ecr-login # the meta data for the task gets store in this id.  it a like a big variable that have multi things in here:  repository, url, region that was used to login
+
+      # Scan repository filesystem before Docker build
+      - name: Trivy filesystem scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: "fs" # Scans filesystem (repo  )
+          scan-ref: "." # Examine the entire checked-out repo
+          format: "table" # Output format (table, json, sarif )
+          severity: "CRITICAL,HIGH"  # Only fail on critical/high
+          exit-code: "1" # fail if vulnerabilities found
+          ignore-unfixed: true  # Ignore unfixed vulnerabilites
+  
+  
+  
       - name: Build and tag image
         id: build-and-push # alias to refer to later
         run: | # | is to run multiply command
@@ -41,9 +55,9 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: ${{ steps.ecr-login.outputs.registry }}/${{ env.ECR_REPO_NAME }}:${{ env.IMAGE_TAG }}
-          format: 'table'
-          severity: 'CRITICAL,HIGH'
-          exit-code: '0' # 1 mean fail and 0 means succes
+          format: "table"
+          severity: "CRITICAL,HIGH"
+          exit-code: "0" # 1 mean fail and 0 means succes, keep at 0 just to test the pipeline
           ignore-unfixed: true
       - name: Push image to ecr
         run: |

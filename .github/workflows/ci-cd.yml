@@ -30,12 +30,25 @@ jobs:
       - name: loging to ecr
         uses: aws-actions/amazon-ecr-login@v2
         id: ecr-login # the meta data for the task gets store in this id.  it a like a big variable that have multi things in here:  repository, url, region that was used to login
-      - name: Build tag and push image
+      - name: Build and tag image
         id: build-and-push # alias to refer to later
         run: | # | is to run multiply command
             docker build -t ${{ steps.ecr-login.outputs.registry }}/${{ env.ECR_REPO_NAME }}:${{ env.IMAGE_TAG }} . 
-            docker push ${{ steps.ecr-login.outputs.registry }}/${{ env.ECR_REPO_NAME }}:${{ env.IMAGE_TAG }}
+            
       
+      # Scan before push
+        name: Scan docker Image for vulnerabilities
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ steps.ecr-login.outputs.registry }}/${{ env.ECR_REPO_NAME }}:${{ env.IMAGE_TAG }}
+          format: 'table'
+          severity: 'CRITICAL,HIGH'
+          exit-code: '1'
+          ignore-unfixed: true
+        name: Push image to ecr
+        run: |
+          docker push ${{ steps.ecr-login.outputs.registry }}/${{ env.ECR_REPO_NAME }}:${{ env.IMAGE_TAG }}
+
 
 
       

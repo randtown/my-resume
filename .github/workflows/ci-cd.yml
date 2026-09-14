@@ -13,7 +13,8 @@ permissions:
 env:
    AWS_REGION: us-east-1
    AWS_ROLE: ${{ secrets.AWS_ACTION_ROLE }} # to pull role-to-assume for github action 
-
+   ECR_REPO_NAME: dev1
+   IMAGE_TAG: ${{ github.run_number }}
 
 jobs:
   build:
@@ -28,4 +29,13 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
       - name: loging to ecr
         uses: aws-actions/amazon-ecr-login@v2
+        id: ecr-login # the meta data for the task gets store in this id.  it a like a big variable that have multi things in here:  repository, url, region that was used to login
+      - name: Build tag and push image
+        id: build-and-push # alias to refer to later
+        run: | # | is to run multiply command
+            docker build -t ${{ steps.ecr-login.outputs.registry }}/${{ env.ECR_REPO_NAME }}:${{ env.IMAGE_TAG }} . 
+            docker push ${{ steps.ecr-login.outputs.registry }}/${{ env.ECR_REPO_NAME }}:${{ env.IMAGE_TAG }}
+      
+
+
       

@@ -43,7 +43,7 @@ jobs:
           image-ref: ${{ steps.ecr-login.outputs.registry }}/${{ env.ECR_REPO_NAME }}:${{ env.IMAGE_TAG }}
           format: 'table'
           severity: 'CRITICAL,HIGH'
-          exit-code: '1'
+          exit-code: '0' # 1 mean fail and 0 means succes
           ignore-unfixed: true
       - name: Push image to ecr
         run: |

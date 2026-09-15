@@ -28,16 +28,16 @@ jobs:
       image-uri: ${{ steps.set-image.outputs.image-uri }}
     steps:
       - name: Clone repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       
       - name: AWS Creds Config 
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: ${{ env.AWS_ROLE }}
           aws-region: ${{ env.AWS_REGION }}
       
       - name: Login to ECR 
-        uses: aws-actions/amazon-ecr-login@v1
+        uses: aws-actions/amazon-ecr-login@v2
         id: ecr-login
       - name: FS Scan with Trivy
         uses: aquasecurity/trivy-action@master
@@ -115,7 +115,7 @@ jobs:
     needs: Build  # Depends on Build job
     steps:
       - name: AWS Creds Config 
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: ${{ env.AWS_ROLE }}
           aws-region: ${{ env.AWS_REGION }}

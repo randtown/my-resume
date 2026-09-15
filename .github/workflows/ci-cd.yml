@@ -15,6 +15,8 @@ env:
    AWS_ROLE: ${{ secrets.AWS_ACTION_ROLE }} # to pull role-to-assume for github action 
    ECR_REPO_NAME: dev1
    IMAGE_TAG: ${{ github.run_number }}
+   ECS_SERVICE: terraform-nginx-service
+   ECS_CLUSTER: terraform-ecs-cluster
 
 jobs:
   build:
@@ -101,7 +103,15 @@ jobs:
           exit-code: '0'
           ignore-unfixed: true
 
-      # 6. Render ECS task definition
+      # 6. Get current ECS task definition from AWS
+      - name: Get current ECS task definition
+        run: |
+          aws ecs describe-task-definition \
+          --task-definition terraform-nginx \
+          --query taskDefinition \
+          --output json > task-definition.json
+
+      # 7. Render ECS task definition
       - name: Render ECS task definition
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
@@ -110,7 +120,7 @@ jobs:
           container-name: nginx
           image: ${{ steps.ecr-login.outputs.registry }}/${{ env.ECR_REPO_NAME }}:${{ env.IMAGE_TAG }}
 
-      # 7. Deploy to ECS
+      # 8. Deploy to ECS
       - name: Deploy to ECS
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:

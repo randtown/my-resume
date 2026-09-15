@@ -28,7 +28,7 @@ jobs:
       image-uri: ${{ steps.set-image.outputs.image-uri }}
     steps:
       - name: Clone repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       
       - name: AWS Creds Config 
         uses: aws-actions/configure-aws-credentials@v6

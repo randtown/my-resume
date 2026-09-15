@@ -17,7 +17,7 @@ env:
   ECR_REPO_NAME: dev
   IMAGE_TAG: ${{ github.run_number }}
   TASK_DEFINITION: terraform-nginx
-  ECS_CLUSTER: nginx-cluster
+  ECS_CLUSTER: terraform-ecs-cluster
   ECS_SERVICE: nginx-service
   CONTAINER_NAME: nginx
 
